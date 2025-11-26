@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv(encoding="utf-8")
 
-DATABASE_URL = "postgresql://postgres:123@localhost:5432/autoservice_db"
+DATABASE_URL = os.getenv("DATABASE_URL")  # берём из .env
 
 engine = create_engine(
     DATABASE_URL,
