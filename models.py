@@ -6,7 +6,7 @@ from enum import StrEnum
 class PaymentStatus(StrEnum):
     PENDING = "PENDING"
     PAID = "PAID"
-    CANCELLED = "Cancelled"
+    CANCELLED = "CANCELLED"
 
 class Record(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
