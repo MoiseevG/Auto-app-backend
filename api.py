@@ -104,3 +104,16 @@ def delete_record(record_id: int, session: Session = Depends(get_session)):
     session.delete(record)
     session.commit()
     return {"message": "Record deleted successfully"}
+
+# ←←←←← УДАЛИТЬ ПОСЛЕ ОДНОГО ВЫЗОВА!!! →→→→→
+@record_router.post("/fix-old-status")
+def fix_old_status(session: Session = Depends(get_session)):
+    from sqlalchemy import update
+    result = session.exec(
+        update(Record)
+        .where(Record.payment_status == "Cancelled")
+        .values(payment_status="CANCELLED")
+    )
+    session.commit()
+    return {"fixed": result.rowcount, "detail": "All old 'Cancelled' → 'CANCELLED'"}
+# ←←←←← УДАЛИТЬ ПОСЛЕ ВЫЗОВА!!! →→→→→
