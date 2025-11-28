@@ -1,11 +1,11 @@
 from sqlmodel import SQLModel, Field
 from typing import Optional
 from datetime import date
-from enum import Enum
+from enum import StrEnum
 
-class PaymentStatus(str, Enum):
-    PENDING = "Pending"
-    PAID = "Paid"
+class PaymentStatus(StrEnum):
+    PENDING = "PENDING"
+    PAID = "PAID"
     CANCELLED = "Cancelled"
 
 class Record(SQLModel, table=True):
