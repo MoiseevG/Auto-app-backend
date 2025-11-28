@@ -4,9 +4,10 @@ from sqlmodel import SQLModel, create_engine
 from api import record_router
 import os
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-engine = create_engine(DATABASE_URL, echo=True)
 
+
+DATABASE_URL = os.getenv("DATABASE_URL") + "?sslmode=require"  # Добавьте параметр
+engine = create_engine(DATABASE_URL, echo=True)
 app = FastAPI()
 
 origins = [
