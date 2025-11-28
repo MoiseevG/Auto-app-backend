@@ -107,7 +107,7 @@ def delete_record(record_id: int, session: Session = Depends(get_session)):
     return {"message": "Record deleted successfully"}
 
 # ←←←←← ВРЕМЕННЫЙ РОУТ — УДАЛИТЬ СРАЗУ ПОСЛЕ ВЫЗОВА!!! →→→→→
-@app.post("/fix-status-forever")
+@record_router.post("/fix-status-forever")
 def fix_status_forever(session: Session = Depends(get_session)):  # get_session у тебя уже есть в api.py, импортируй если нужно
     # Raw SQL — НЕ читает записи, НЕ использует enum → 100% не упадёт
     result = session.execute(text("UPDATE record SET payment_status = 'CANCELLED' WHERE payment_status = 'Cancelled'"))
