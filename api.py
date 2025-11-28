@@ -107,11 +107,3 @@ def delete_record(record_id: int, session: Session = Depends(get_session)):
     return {"message": "Record deleted successfully"}
 
 
-# ВРЕМЕННЫЙ РОУТ — РАБОТАЕТ НА 100% — УДАЛИТЬ ПОСЛЕ ВЫЗОВА!
-@record_router.post("/fix-status-now", status_code=200)
-def fix_status_now(session: Session = Depends(get_session)):
-    result = session.execute(text("UPDATE record SET payment_status = 'CANCELLED' WHERE payment_status = 'Cancelled' OR payment_status ILIKE 'cancel%'"))
-    session.commit()
-    return {"message": "ВСЁ, БРАТ! Теперь в базе везде CANCELLED. УДАЛЯЙ ЭТОТ РОУТ!", "fixed_rows": result.rowcount}
-
-# ←←←←← УДАЛИТЬ ПОСЛЕ ВЫЗОВА!!! →→→→→
