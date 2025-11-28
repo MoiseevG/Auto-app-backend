@@ -1,20 +1,18 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel, create_engine
 from api import record_router
 import os
-from fastapi.middleware.cors import CORSMiddleware
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+engine = create_engine(DATABASE_URL, echo=True)
+
+app = FastAPI()
 
 origins = [
     "https://auto-app-zovz.onrender.com",
     "http://localhost:3000",
 ]
-
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-engine = create_engine(DATABASE_URL, echo=True)
-
-app = FastAPI()
-app.include_router(record_router, prefix="/records")
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,7 +23,9 @@ app.add_middleware(
 )
 
 
-# Создание таблиц при старте
+app.include_router(record_router, prefix="/records")
+
+
 @app.on_event("startup")
 def on_startup():
     SQLModel.metadata.create_all(engine)
