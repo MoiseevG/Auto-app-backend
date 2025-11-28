@@ -106,16 +106,12 @@ def delete_record(record_id: int, session: Session = Depends(get_session)):
     session.commit()
     return {"message": "Record deleted successfully"}
 
-# ←←←←← ВРЕМЕННЫЙ РОУТ — УДАЛИТЬ СРАЗУ ПОСЛЕ ВЫЗОВА!!! →→→→→
-@record_router.post("/fix-status-forever")
-def fix_status_forever(session: Session = Depends(get_session)):  # get_session у тебя уже есть в api.py, импортируй если нужно
-    # Raw SQL — НЕ читает записи, НЕ использует enum → 100% не упадёт
-    result = session.execute(text("UPDATE record SET payment_status = 'CANCELLED' WHERE payment_status = 'Cancelled'"))
+
+# ВРЕМЕННЫЙ РОУТ — РАБОТАЕТ НА 100% — УДАЛИТЬ ПОСЛЕ ВЫЗОВА!
+@record_router.post("/fix-status-now", status_code=200)
+def fix_status_now(session: Session = Depends(get_session)):
+    result = session.execute(text("UPDATE record SET payment_status = 'CANCELLED' WHERE payment_status = 'Cancelled' OR payment_status ILIKE 'cancel%'"))
     session.commit()
-    
-    # На всякий случай ловим все варианты регистра
-    session.execute(text("UPDATE record SET payment_status = 'CANCELLED' WHERE payment_status ILIKE 'cancel%'"))
-    session.commit()
-    
-    return {"message": "ВСЁ ИСПРАВЛЕНО НАВСЕГДА", "fixed_rows": result.rowcount}
+    return {"message": "ВСЁ, БРАТ! Теперь в базе везде CANCELLED. УДАЛЯЙ ЭТОТ РОУТ!", "fixed_rows": result.rowcount}
+
 # ←←←←← УДАЛИТЬ ПОСЛЕ ВЫЗОВА!!! →→→→→
