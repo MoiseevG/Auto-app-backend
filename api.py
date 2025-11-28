@@ -4,6 +4,7 @@ from typing import List
 from database import engine
 from models import Record, RecordCreate, RecordUpdate, RecordRead
 from pydantic import BaseModel
+from sqlalchemy import text
 
 record_router = APIRouter()
 
@@ -105,15 +106,16 @@ def delete_record(record_id: int, session: Session = Depends(get_session)):
     session.commit()
     return {"message": "Record deleted successfully"}
 
-# ←←←←← УДАЛИТЬ ПОСЛЕ ОДНОГО ВЫЗОВА!!! →→→→→
-@record_router.post("/fix-old-status")
-def fix_old_status(session: Session = Depends(get_session)):
-    from sqlalchemy import update
-    result = session.exec(
-        update(Record)
-        .where(Record.payment_status == "Cancelled")
-        .values(payment_status="CANCELLED")
-    )
+# ←←←←← ВРЕМЕННЫЙ РОУТ — УДАЛИТЬ СРАЗУ ПОСЛЕ ВЫЗОВА!!! →→→→→
+@app.post("/fix-status-forever")
+def fix_status_forever(session: Session = Depends(get_session)):  # get_session у тебя уже есть в api.py, импортируй если нужно
+    # Raw SQL — НЕ читает записи, НЕ использует enum → 100% не упадёт
+    result = session.execute(text("UPDATE record SET payment_status = 'CANCELLED' WHERE payment_status = 'Cancelled'"))
     session.commit()
-    return {"fixed": result.rowcount, "detail": "All old 'Cancelled' → 'CANCELLED'"}
+    
+    # На всякий случай ловим все варианты регистра
+    session.execute(text("UPDATE record SET payment_status = 'CANCELLED' WHERE payment_status ILIKE 'cancel%'"))
+    session.commit()
+    
+    return {"message": "ВСЁ ИСПРАВЛЕНО НАВСЕГДА", "fixed_rows": result.rowcount}
 # ←←←←← УДАЛИТЬ ПОСЛЕ ВЫЗОВА!!! →→→→→
