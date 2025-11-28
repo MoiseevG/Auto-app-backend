@@ -19,7 +19,7 @@ class PaymentStatusUpdate(BaseModel):
 # --- CREATE: создание новой записи ---
 @record_router.post("/", response_model=RecordRead)
 def create_record(record: RecordCreate, session: Session = Depends(get_session)):
-    db_record = Record.model_validate(record)
+    db_record = Record(**record.dict())  
     session.add(db_record)
     session.commit()
     session.refresh(db_record)

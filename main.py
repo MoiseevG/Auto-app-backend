@@ -10,6 +10,12 @@ DATABASE_URL = os.getenv("DATABASE_URL") + "?sslmode=require"  # Добавьт�
 engine = create_engine(DATABASE_URL, echo=True)
 app = FastAPI()
 
+try:
+    with engine.connect() as conn:
+        print("DB connected successfully")
+except Exception as e:
+    print(f"DB connection error: {e}")
+
 origins = [
     "https://auto-app-zovz.onrender.com",
     "http://localhost:3000",
