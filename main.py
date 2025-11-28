@@ -14,7 +14,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL, echo=True)
 
 app = FastAPI()
-app.add_routeer("/records", record_router)
+app.add_route("/records", record_router)
 
 app.add_middleware(
     CORSMiddleware,
